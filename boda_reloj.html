@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Tiempo para…</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --sand: #e8dcc8;
+  --sand-mid: #d4c4a0;
+  --sand-dark: #b09870;
+  --ink: #2a2018;
+  --ink-mid: #6b5840;
+  --ink-light: #a08060;
+  --gold: #c8a050;
+  --gold-light: #e0c080;
+  --bg: #f7f2ea;
+  --bg2: #efe8d8;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100vh;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+body {
+  font-family: 'Jost', sans-serif;
+  font-weight: 300;
+  color: var(--ink);
+  overflow-x: hidden;
+}
+
+.scene {
+  position: relative;
+  width: 100%;
+  max-width: 390px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3.5rem 2.5rem 4rem;
+  overflow: hidden;
+}
+
+.bg-ornament {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.bg-ornament svg {
+  width: 100%;
+  height: 100%;
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0;
+}
+
+.top-rule {
+  width: 1px;
+  height: 48px;
+  background: linear-gradient(to bottom, transparent, var(--sand-dark));
+  margin-bottom: 2rem;
+  opacity: 0;
+  animation: fadeIn 1.2s ease 0.3s forwards;
+}
+
+.names {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+  font-style: italic;
+  font-size: 1.05rem;
+  color: var(--ink-mid);
+  letter-spacing: 0.12em;
+  margin-bottom: 0.35rem;
+  opacity: 0;
+  animation: riseIn 1s ease 0.5s forwards;
+}
+
+.date-stamp {
+  font-family: 'Jost', sans-serif;
+  font-weight: 200;
+  font-size: 0.62rem;
+  letter-spacing: 0.35em;
+  color: var(--ink-light);
+  text-transform: uppercase;
+  margin-bottom: 2.8rem;
+  opacity: 0;
+  animation: riseIn 1s ease 0.7s forwards;
+}
+
+.hourglass-container {
+  position: relative;
+  width: 90px;
+  height: 156px;
+  margin-bottom: 2.8rem;
+  opacity: 0;
+  animation: riseIn 1s ease 0.9s forwards;
+}
+
+.hourglass-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.sand-waist {
+  animation: waisGlow 3s ease-in-out infinite alternate;
+}
+
+.sand-stream {
+  animation: streamFade 2s ease-in-out infinite alternate;
+}
+
+.sand-anim {
+  animation: sandFall 2.2s ease-in infinite;
+}
+
+@keyframes waisGlow {
+  0%   { opacity: 0.7; }
+  100% { opacity: 0.5; }
+}
+
+@keyframes streamFade {
+  0%   { opacity: 0.6; stroke-width: 2.5; }
+  100% { opacity: 0.15; stroke-width: 1.5; }
+}
+
+@keyframes sandFall {
+  0%   { transform: translateY(0);    opacity: 0.95; }
+  65%  { transform: translateY(68px); opacity: 0.5; }
+  66%  { transform: translateY(0);    opacity: 0; }
+  67%  { opacity: 0.95; }
+  100% { transform: translateY(0);    opacity: 0.95; }
+}
+
+.momento-badge {
+  font-family: 'Jost', sans-serif;
+  font-weight: 200;
+  font-size: 0.5rem;
+  letter-spacing: 0.7em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.9rem;
+  opacity: 0;
+  animation: fadeIn 1s ease 1.2s forwards;
+}
+
+.tiempo-pre {
+  font-family: 'Jost', sans-serif;
+  font-weight: 200;
+  font-size: 0.75rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--ink-light);
+  margin-bottom: 0.5rem;
+  opacity: 0;
+  animation: fadeIn 1s ease 1.4s forwards;
+}
+
+.frase-wrap {
+  min-height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 2.2rem;
+  opacity: 0;
+  animation: fadeIn 0.1s ease 1.5s forwards;
+}
+
+.frase {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+  font-style: italic;
+  font-size: 2.35rem;
+  line-height: 1.2;
+  color: var(--ink);
+  letter-spacing: -0.015em;
+  transition: opacity 0.45s cubic-bezier(.4,0,.2,1), transform 0.45s cubic-bezier(.4,0,.2,1);
+  will-change: opacity, transform;
+}
+
+.frase.out {
+  opacity: 0;
+  transform: translateY(-14px);
+}
+
+.frase.in-enter {
+  opacity: 0;
+  transform: translateY(16px);
+}
+
+.ornament-line {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 220px;
+  margin-bottom: 2rem;
+  opacity: 0;
+  animation: fadeIn 1s ease 1.8s forwards;
+}
+
+.ornament-line::before,
+.ornament-line::after {
+  content: '';
+  flex: 1;
+  height: 0.5px;
+  background: var(--sand-dark);
+}
+
+.ornament-diamond {
+  width: 5px;
+  height: 5px;
+  background: var(--gold);
+  transform: rotate(45deg);
+  flex-shrink: 0;
+}
+
+.firma {
+  font-family: 'Jost', sans-serif;
+  font-weight: 200;
+  font-size: 0.65rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--ink-light);
+  margin-bottom: 1.5rem;
+  opacity: 0;
+  animation: fadeIn 1s ease 2s forwards;
+}
+
+.contador {
+  margin-top: 1.5rem;
+  font-family: 'Jost', sans-serif;
+  font-weight: 200;
+  font-size: 0.58rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ink-light);
+  opacity: 0;
+  transition: opacity 0.8s ease;
+  min-height: 18px;
+}
+
+.bottom-rule {
+  width: 1px;
+  height: 48px;
+  background: linear-gradient(to top, transparent, var(--sand-dark));
+  margin-top: 2rem;
+  opacity: 0;
+  animation: fadeIn 1.2s ease 2.5s forwards;
+}
+
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@media (max-height: 680px) {
+  .top-rule, .bottom-rule { height: 28px; }
+  .hourglass-container { margin-bottom: 1.8rem; }
+  .date-stamp { margin-bottom: 1.8rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="scene">
+
+  <div class="bg-ornament" aria-hidden="true">
+    <svg viewBox="0 0 390 844" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+      <rect width="390" height="844" fill="#f7f2ea"/>
+      <circle cx="195" cy="422" r="310" stroke="#d4c4a0" stroke-width="0.4" opacity="0.5"/>
+      <circle cx="195" cy="422" r="260" stroke="#d4c4a0" stroke-width="0.4" opacity="0.35"/>
+      <circle cx="195" cy="422" r="380" stroke="#d4c4a0" stroke-width="0.3" opacity="0.2"/>
+      <line x1="195" y1="0" x2="195" y2="844" stroke="#d4c4a0" stroke-width="0.3" opacity="0.25"/>
+      <line x1="0" y1="422" x2="390" y2="422" stroke="#d4c4a0" stroke-width="0.3" opacity="0.25"/>
+      <path d="M30 30 L60 30 L60 60" stroke="#c8a050" stroke-width="0.6" fill="none" opacity="0.4"/>
+      <path d="M360 30 L330 30 L330 60" stroke="#c8a050" stroke-width="0.6" fill="none" opacity="0.4"/>
+      <path d="M30 814 L60 814 L60 784" stroke="#c8a050" stroke-width="0.6" fill="none" opacity="0.4"/>
+      <path d="M360 814 L330 814 L330 784" stroke="#c8a050" stroke-width="0.6" fill="none" opacity="0.4"/>
+
+    </svg>
+  </div>
+
+  <div class="content">
+
+    <div class="top-rule" aria-hidden="true"></div>
+
+    <p class="names">Chelo &amp; Antonio</p>
+    <p class="date-stamp">29 · mayo · 2026</p>
+
+    <div class="hourglass-container" aria-hidden="true">
+      <svg class="hourglass-svg" viewBox="0 0 173.18 299.8" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <clipPath id="cTop">
+            <rect x="0" y="0" width="173.18" height="149.9"/>
+          </clipPath>
+          <clipPath id="cBot">
+            <rect x="0" y="149.9" width="173.18" height="149.9"/>
+          </clipPath>
+          <clipPath id="cSandTop">
+            <path d="M30,52 Q86,28 143,52 L120,140 Q86,150 53,140 Z"/>
+          </clipPath>
+          <clipPath id="cSandBot">
+            <path d="M53,160 Q86,150 120,160 L145,265 Q86,278 28,265 Z"/>
+          </clipPath>
+        </defs>
+
+        <!-- Marco exterior (silueta del reloj) relleno base -->
+        <path d="M158.2,36.69c-.97,1.55-.94,3.63-.57,6.09.45,2.87.91,5.92,1.02,8.88,1.64,32.42-19.24,57.83-42.99,77.85-4.23,3.65-8.8,7.73-12.12,11.75-9.14,10.01-3.56,19.16,5.04,26.95,6.18,5.75,13.13,11,19.04,16.97,20.5,20.07,35.42,45.83,30.2,75.34-.32,2.01-.48,3.89-.03,5.44,1.49,4.81,7.68,5.39,10.86,8.81,3.5,3.13,5.37,8.28,4.15,12.68-2.78,10.08-14.85,11.89-23.97,11.81-39.34-.98-79.85,1.95-118.98-.37-8.89-1.01-24.69-2.17-28.92-10.93-2.37-4.9,0-10.57,4.29-13.93,2.36-2.06,5.59-3.11,7.95-5.08,2.35-2.07,2.36-4.76,1.89-7.91-5.14-27.93,7.83-53.02,27.01-72.78,4.22-4.41,7.98-7.77,12.87-11.93,5.41-4.67,12.09-10.43,15.6-15.04,2.09-2.74,3.21-5.76,3.06-9.28-.48-9.6-9.56-16.33-16.39-22.17C32.02,108.79,8.58,78.65,14.77,43.84c.44-2.89.57-5.45-1.15-7.66-2.36-2.98-7.56-4.32-10.32-7.4C-2.66,22.34-.17,13.72,8.06,10.27c29.71-13.82,127.5-13.7,157.03.4,7,3.05,11.07,10.77,5.2,17.07-1.6,1.79-3.62,3.26-5.73,4.44-2.19,1.23-4.97,2.36-6.29,4.38l-.08.13Z"
+              fill="#C8A050" opacity="0.12"/>
+
+        <!-- Arena superior (bulbo de arriba, casi vaciada) -->
+        <path d="M148,32.29c-15.47-13.48-97.2-9.71-117.8-3.39-9.65,2.84-10.95,14.6-11.85,23.13-1.66,28.62,17.67,53.21,38.09,71.25,5.62,4.81,12.19,9.91,16.82,15.6,9.96,11.77,5.46,21.43-4.51,30.86-6.95,6.86-14.91,13.05-21.88,19.9-19.63,19.61-37.42,51.64-24.53,79,7.94,18.11,101.51,12.54,119.28,6.84,10.14-3.44,12.8-15.29,13.04-24.87.77-29.97-20.06-54.52-41.86-73.03-31.27-25.16-19.78-34.97,6.06-56.64,19.41-17.62,36.72-41.06,35.76-68.29-.36-6.72-1.75-15.11-6.5-20.24l-.13-.13Z"
+              fill="#D4A853" opacity="0.22" clip-path="url(#cTop)"/>
+
+        <!-- Arena inferior (acumulada abajo, más intensa) -->
+        <path d="M148,32.29c-15.47-13.48-97.2-9.71-117.8-3.39-9.65,2.84-10.95,14.6-11.85,23.13-1.66,28.62,17.67,53.21,38.09,71.25,5.62,4.81,12.19,9.91,16.82,15.6,9.96,11.77,5.46,21.43-4.51,30.86-6.95,6.86-14.91,13.05-21.88,19.9-19.63,19.61-37.42,51.64-24.53,79,7.94,18.11,101.51,12.54,119.28,6.84,10.14-3.44,12.8-15.29,13.04-24.87.77-29.97-20.06-54.52-41.86-73.03-31.27-25.16-19.78-34.97,6.06-56.64,19.41-17.62,36.72-41.06,35.76-68.29-.36-6.72-1.75-15.11-6.5-20.24l-.13-.13Z" fill="#D4A853" opacity="0.22" clip-path="url(#cBot)"></path>
+
+        <!-- Forma de arena en la cintura (la path interior) -->
+        <path d="M96.7,137.59c-3.29,3.53-6.55,7.48-7.96,12.19-.82,2.79-1.11,6.26-1.62,7.2-.27.55-.62.23-.82-.25-.87-1.99-1.23-4.44-2.02-6.57-1.34-3.83-3.66-7.25-6.29-10.31-15.49-18.21-46.42-37.18-50.82-61.63-1.42-13.02,43.36-3.92,50.82-2.75,18.32,3.38,37.57,6.3,54.69,13.44,7.56,3.33,4.57,9.21.44,14.02-10.85,13.09-24.51,22.53-36.28,34.5l-.14.14Z"
+              fill="#D4A853" opacity="0.7" class="sand-waist"/>
+
+
+        <!-- Partícula animada cayendo -->
+        <ellipse class="sand-anim" cx="86.59" cy="158" rx="2" ry="4" fill="#D4A853" opacity="0.5"></ellipse>
+
+        <!-- Marco exterior (silueta encima de todo) trazo -->
+        <path d="M158.2,36.69c-.97,1.55-.94,3.63-.57,6.09.45,2.87.91,5.92,1.02,8.88,1.64,32.42-19.24,57.83-42.99,77.85-4.23,3.65-8.8,7.73-12.12,11.75-9.14,10.01-3.56,19.16,5.04,26.95,6.18,5.75,13.13,11,19.04,16.97,20.5,20.07,35.42,45.83,30.2,75.34-.32,2.01-.48,3.89-.03,5.44,1.49,4.81,7.68,5.39,10.86,8.81,3.5,3.13,5.37,8.28,4.15,12.68-2.78,10.08-14.85,11.89-23.97,11.81-39.34-.98-79.85,1.95-118.98-.37-8.89-1.01-24.69-2.17-28.92-10.93-2.37-4.9,0-10.57,4.29-13.93,2.36-2.06,5.59-3.11,7.95-5.08,2.35-2.07,2.36-4.76,1.89-7.91-5.14-27.93,7.83-53.02,27.01-72.78,4.22-4.41,7.98-7.77,12.87-11.93,5.41-4.67,12.09-10.43,15.6-15.04,2.09-2.74,3.21-5.76,3.06-9.28-.48-9.6-9.56-16.33-16.39-22.17C32.02,108.79,8.58,78.65,14.77,43.84c.44-2.89.57-5.45-1.15-7.66-2.36-2.98-7.56-4.32-10.32-7.4C-2.66,22.34-.17,13.72,8.06,10.27c29.71-13.82,127.5-13.7,157.03.4,7,3.05,11.07,10.77,5.2,17.07-1.6,1.79-3.62,3.26-5.73,4.44-2.19,1.23-4.97,2.36-6.29,4.38l-.08.13Z"
+              fill="none" stroke="#B89050" stroke-width="1.2" opacity="0.9"/>
+      </svg>
+    </div>
+
+    <p class="momento-badge" id="momentoBadge">Este momento</p>
+    <p class="tiempo-pre">Tiempo para</p>
+
+    <div class="frase-wrap">
+      <p class="frase" id="fraseEl" aria-live="polite"></p>
+    </div>
+
+    <div class="ornament-line" aria-hidden="true">
+      <div class="ornament-diamond"></div>
+    </div>
+
+    <p class="firma">Con amor, Chelo &amp; Antonio</p>
+
+    <p class="contador" id="contadorEl"></p>
+
+    <div class="bottom-rule" aria-hidden="true"></div>
+
+  </div>
+</div>
+
+<script>
+const BODA_DATE = new Date(2026, 4, 29); // 29 mayo 2026
+
+const frases = {
+  boda: [
+    "estar presente en cada abrazo de hoy",
+    "dejar que la alegría entre sin permiso",
+    "bailar aunque no sepas cómo",
+    "disfrutar con tu familia en este día tan especial",
+    "guardar este momento en algún lugar seguro dentro de ti",
+    "reír a carcajadas con quien tengas al lado",
+    "brindar por el amor que hoy se celebra",
+    "soltar el teléfono y mirar a los ojos",
+    "decirle a alguien que le quieres",
+    "dejar que la música te mueva",
+    "recordar este día toda la vida",
+    "ser completamente feliz, aquí y ahora"
+  ],
+  madrugada: [
+    "escuchar el silencio",
+    "no poder dormir y que eso esté bien",
+    "pensar en lo que importa de verdad",
+    "volver a la cama sin culpa",
+    "escribir lo que sientes antes de que el día lo borre",
+    "agradecer que llegó otro amanecer",
+    "soñar con los ojos abiertos",
+    "hacer las paces con lo que fue",
+    "quedarte quieto un momento",
+    "escuchar solo para ti esa canción"
+  ],
+  manana: [
+    "empezar sin prisa",
+    "tomar el café despacio, de verdad despacio",
+    "abrir la ventana antes de mirar el móvil",
+    "decidir cómo quieres que sea este día",
+    "llamar a alguien que echas de menos",
+    "dar los buenos días como si importara",
+    "hacer una sola cosa bien, no diez a medias",
+    "salir aunque no tengas destino fijo",
+    "escuchar algo que te alegre el camino",
+    "escribir tres cosas que te gustan de ti",
+    "no leer las noticias todavía",
+    "agradecer que hoy tienes otra oportunidad"
+  ],
+  mediodia: [
+    "alejarte de la pantalla aunque sea un rato",
+    "comer sin hacer nada más al mismo tiempo",
+    "salir a que te dé el sol en la cara",
+    "hacer una pausa que no estaba planificada",
+    "llamar a alguien que lleva tiempo sin saber de ti",
+    "no responder ese mensaje todavía",
+    "respirar hondo antes de la siguiente reunión",
+    "recordar por qué empezaste lo que estás haciendo",
+    "tomarte un café con alguien de verdad",
+    "soltar algo que llevas cargando desde esta mañana",
+    "reírte de algo sin justificación",
+    "darte permiso de no tenerlo todo bajo control"
+  ],
+  tarde: [
+    "ir más despacio que el resto del día",
+    "escuchar música que no habías puesto en mucho tiempo",
+    "leer aunque solo sean dos páginas",
+    "no saber qué hora es durante un rato",
+    "llamar a quien sabes que lo necesita",
+    "salir a dar una vuelta sin rumbo",
+    "escribir algo que nunca le has dicho a nadie",
+    "ordenar algo pequeño y sentir que puedes con lo grande",
+    "ver el cielo antes de que se apague",
+    "agradecer lo que funcionó hoy aunque fuera poco",
+    "dejar el trabajo donde está y marcharte",
+    "hacer algo solo por el placer de hacerlo"
+  ],
+  noche: [
+    "no tener prisa por nada más",
+    "cenar sin pantallas",
+    "contarle tu día a alguien que quiera escuchar",
+    "perdonar algo antes de cerrar los ojos",
+    "releer algo que te marcó en su momento",
+    "estar cerca de quien quieres sin decir nada",
+    "apagar las luces un poco antes",
+    "escribir en papel, no en el móvil",
+    "recordar un momento bonito de esta semana",
+    "dejar ir lo que no salió bien hoy",
+    "agradecer en silencio",
+    "darte permiso de descansar sin culpa"
+  ],
+  findesemana_manana: [
+    "no poner la alarma mañana",
+    "desayunar como si tuvieras todo el tiempo del mundo",
+    "hacer esa llamada que llevas posponiendo",
+    "salir sin saber adónde exactamente",
+    "leer el periódico de papel si lo encuentras",
+    "visitar a alguien mayor que te alegra verlo",
+    "caminar sin auriculares por una vez",
+    "quedarte en pijama hasta las doce",
+    "cocinar algo que te lleve tiempo",
+    "explorar un barrio de tu ciudad que no conoces bien"
+  ],
+  findesemana_tarde: [
+    "no hacer nada productivo y que eso esté bien",
+    "ver esa película que tienes pendiente desde hace meses",
+    "sentarte al sol aunque solo sea un rato",
+    "jugar a algo, lo que sea",
+    "escribirle a alguien que no espera noticias tuyas",
+    "ordenar ese cajón que llevas ignorando",
+    "escuchar un álbum entero de principio a fin",
+    "hacer algo con las manos",
+    "quedarte con una conversación larga y sin prisa",
+    "acordarte de quién eras antes de tanto ajetreo"
+  ],
+  universal: [
+    "abrazar más y hablar menos",
+    "decir lo que sientes antes de que sea tarde",
+    "estar donde estás, no donde podrías estar",
+    "hacer algo que mañana te alegres de haber hecho",
+    "querer lo que tienes mientras lo tienes",
+    "volver a empezar si hace falta",
+    "reírte de ti mismo",
+    "elegirte a ti también",
+    "estar bien sin necesitar que todo lo esté",
+    "confiar en que el tiempo pone las cosas en su sitio",
+    "no esperar a que llegue el momento perfecto",
+    "llamar en vez de escribir",
+    "pedir perdón si sabes que lo debes",
+    "admitir que no lo sabes todo",
+    "agradecer a quien nunca espera las gracias",
+    "hacer una cosa a la vez",
+    "escuchar sin preparar ya la respuesta",
+    "ser exactamente como eres hoy"
+  ]
+};
+
+function getMomento() {
+  const now = new Date();
+  const h = now.getHours();
+  const isWeekend = now.getDay() === 0 || now.getDay() === 6;
+  const isWeddingDay = now.toDateString() === BODA_DATE.toDateString();
+
+  if (isWeddingDay) return 'boda';
+  if (h >= 0 && h < 6) return 'madrugada';
+  if (isWeekend && h >= 6 && h < 14) return 'findesemana_manana';
+  if (isWeekend && h >= 14) return 'findesemana_tarde';
+  if (h >= 6 && h < 12) return 'manana';
+  if (h >= 12 && h < 15) return 'mediodia';
+  if (h >= 15 && h < 20) return 'tarde';
+  return 'noche';
+}
+
+const badges = {
+  boda: 'Hoy es el gran día',
+  madrugada: 'En la madrugada',
+  manana: 'Esta mañana',
+  mediodia: 'A mediodía',
+  tarde: 'Esta tarde',
+  noche: 'Esta noche',
+  findesemana_manana: 'Fin de semana',
+  findesemana_tarde: 'Fin de semana',
+  universal: 'En cualquier momento'
+};
+
+const STORAGE_KEY = 'boda_reloj_v2';
+let pool = [];
+let indicePool = 0;
+let visitas = 1;
+
+function mezclar(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function construirPool(momento) {
+  const especificas = mezclar(frases[momento] || []);
+  const universales = mezclar(frases.universal);
+  return [...especificas, ...universales, ...mezclar(especificas), ...mezclar(universales)];
+}
+
+function getVisitas() {
+  try { return parseInt(localStorage.getItem(STORAGE_KEY) || '0', 10) || 0; } catch(e) { return 0; }
+}
+function setVisitas(n) {
+  try { localStorage.setItem(STORAGE_KEY, String(n)); } catch(e) {}
+}
+
+function mostrarFrase(texto, animado) {
+  const el = document.getElementById('fraseEl');
+  if (!animado) {
+    el.textContent = texto;
+    el.style.opacity = '1';
+    el.style.transform = 'none';
+    return;
+  }
+  el.classList.add('out');
+  setTimeout(() => {
+    el.textContent = texto;
+    el.classList.remove('out');
+    el.classList.add('in-enter');
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      el.classList.remove('in-enter');
+      el.style.opacity = '1';
+      el.style.transform = 'none';
+    }));
+  }, 400);
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  const momento = getMomento();
+  pool = construirPool(momento);
+  indicePool = Math.floor(Math.random() * Math.min(pool.length, frases[momento]?.length || pool.length));
+
+  document.getElementById('momentoBadge').textContent = badges[momento] || 'En cualquier momento';
+
+  visitas = getVisitas() + 1;
+  setVisitas(visitas);
+
+  setTimeout(() => {
+    mostrarFrase(pool[indicePool], false);
+  }, 1400);
+
+  if (visitas > 1) {
+    setTimeout(() => {
+      const el = document.getElementById('contadorEl');
+      el.textContent = 'Este reloj se ha abierto ' + visitas + ' veces';
+      el.style.opacity = '1';
+    }, 2800);
+  }
+});
+</script>
+</body>
+</html>
